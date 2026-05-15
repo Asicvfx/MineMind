@@ -12,8 +12,7 @@
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold">Зарегистрироваться</h1>
           <p class="text-sm text-muted-foreground">
-            Создай аккаунт<template v-if="hasGoogle"> через email или Google</template>.
-            Для рейтинга используем единый список городов.
+            Создай аккаунт через email или Google. Для рейтинга — единый список городов.
           </p>
         </div>
 
@@ -72,9 +71,6 @@
                 <option v-for="item in cities" :key="item" :value="item"></option>
               </datalist>
             </label>
-            <p class="text-xs text-muted-foreground">
-              Разрешаем обычную регистрацию снова, но блокируем очевидно фейковые адреса вроде `demo@...` и `example@...`.
-            </p>
             <p v-if="auth.error" class="text-sm text-destructive">{{ auth.error }}</p>
             <button class="pixel-btn w-full" :disabled="auth.loading || !isCityValid">
               <Loader2 v-if="auth.loading" class="w-4 h-4 animate-spin" />
@@ -82,7 +78,7 @@
             </button>
           </form>
 
-          <div v-if="hasGoogle" class="space-y-3">
+          <div class="space-y-3">
             <div class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
               <div class="h-px flex-1 bg-border"></div>
               <span>или</span>
