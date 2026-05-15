@@ -11,7 +11,10 @@
             <Logo :size="72" glow />
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold">Зарегистрироваться</h1>
-          <p class="text-sm text-muted-foreground">Создай аккаунт через email или Google. Для рейтинга используем единый список городов.</p>
+          <p class="text-sm text-muted-foreground">
+            Создай аккаунт<template v-if="hasGoogle"> через email или Google</template>.
+            Для рейтинга используем единый список городов.
+          </p>
         </div>
 
         <div v-if="pendingGoogle" class="space-y-4">
@@ -79,7 +82,7 @@
             </button>
           </form>
 
-          <div class="space-y-3">
+          <div v-if="hasGoogle" class="space-y-3">
             <div class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
               <div class="h-px flex-1 bg-border"></div>
               <span>или</span>
@@ -107,6 +110,8 @@ useHead({ title: 'Регистрация · MineMind' })
 
 const auth = useAuthStore()
 const router = useRouter()
+const runtime = useRuntimeConfig()
+const hasGoogle = computed(() => !!runtime.public.googleClientId)
 
 const email = ref('')
 const username = ref('')

@@ -51,3 +51,11 @@ Thumbs.db
 # Editor history
 *.bak
 *.orig
+
+# Internal AI workflow files — kept locally, not pushed to public repo
+docs/
+CLAUDE.md
+MEMES_TZ.md
+MOOD_MODE_SPEC.md
+UI_PROMPT.md
+REMAINING.md

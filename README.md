@@ -1,14 +1,13 @@
 # MineMind 🧠💣
 
 > **Сапёр как тренажёр мозга, а не игрушка.** AI-коуч объясняет ходы,
-> Daily Challenge синхронизирован по всему миру, MoodMode переключает
-> игру между «фокус-тишиной» и «угаром с мемами».
+> Daily Challenge синхронизирован по всему миру, MoodMode переключает игру
+> между «фокус-тишиной» и «угаром с мемами».
 
-**nFactorial Incubator 2026** · selection task: Minesweeper · target level: **«Великий»**.
+Submission для **nFactorial Incubator 2026** · selection task: Minesweeper · target level: **«Великий»**.
 
-🔗 **Live:** _добавится после деплоя — см. `docs/deploy_guide.md`_
-💻 **Source:** этот репозиторий
-📋 **Submission form:** https://nfactorialschool.typeform.com/to/HYVeKeEx
+🔗 **Live:** https://mine-mind.vercel.app
+💻 **Source:** https://github.com/Asicvfx/MineMind
 
 ---
 
@@ -17,13 +16,15 @@
 Обычный Сапёр в интернете — это статичная сетка. MineMind — это **продукт**,
 построенный вокруг трёх идей:
 
-1. **Это тренажёр, а не игра.** Каждая партия даёт Brain Score (сложность × точность × скорость),
-   копится streak дней подряд, выдаются achievements. Прогресс измерим.
-2. **AI-коуч учит, а не играет за тебя.** Локальный CSP-решатель находит 100% детерминированные
-   ходы мгновенно; для уклончивых позиций подключается GPT-4o-mini и объясняет логику словами.
-3. **MoodMode — эмоциональный слой, которого нигде нет.** Игрок выбирает *как* игра с ним
-   разговаривает: тишина и lo-fi (Focus), мягкие реакции (Chill), или мем-картинки + sad
-   trombone + тряска экрана (Chaos).
+1. **Это тренажёр, а не игра.** Каждая партия даёт Brain Score
+   (сложность × точность × скорость), копится streak дней подряд, выдаются
+   achievements. Прогресс измерим.
+2. **AI-коуч учит, а не играет за тебя.** Локальный CSP-решатель находит
+   100% детерминированные ходы мгновенно; для уклончивых позиций подключается
+   GPT-4o-mini и объясняет логику словами.
+3. **MoodMode — эмоциональный слой, которого нигде нет.** Игрок выбирает
+   *как* игра с ним разговаривает: тишина и lo-fi (Focus), мягкие реакции
+   (Chill), или мем-картинки + sad trombone + тряска экрана (Chaos).
 
 ---
 
@@ -34,14 +35,14 @@
 - Безопасный первый клик, flood-fill, флаги (ПКМ / long-press)
 - **Ограничение флагов = количество мин** — UX-сигнал что какой-то флаг неверен
 - Подсветка той мины, на которую игрок нажал при проигрыше
-- Игра сохраняется в `localStorage` — переключение на другую страницу не сбрасывает партию
+- Игра сохраняется в `localStorage` — переключение страниц не сбрасывает партию
 
 ### 🤖 AI Coach
-- Гибрид: **Python-решатель CSP** (мгновенно, 100% точно для детерминированных случаев) +
-  **GPT-4o-mini** (для вероятностных случаев)
+- Гибрид: **Python CSP-решатель** (мгновенно, 100% точно для детерминированных
+  случаев) + **GPT-4o-mini** (для вероятностных)
 - Возвращает `{verdict, cell, explanation}`, подсвечивает клетку на доске
 - Объяснение учитывает что флаги игрока могут быть неправильными
-- Валидация на стороне сервера: AI не может предложить уже открытую клетку
+- Серверная валидация: AI не может предложить уже открытую клетку
 
 ### 📅 Daily Challenge
 - Одно детерминированное поле в день для всех (seed-based)
@@ -49,7 +50,7 @@
 - Одна попытка на пользователя в день
 
 ### 🏆 Leaderboard
-- Глобальный + **по городам** (топ-100 Алматы, и т.д.)
+- Глобальный + **по городам** (топ-100 Алматы, Астаны, ...)
 - Фильтры: difficulty, period (today/week/month/all), city
 - Два режима: лучшее время или Brain Score
 
@@ -61,16 +62,18 @@
 ### 🎭 MoodMode — уникальная фича
 - **Focus 🧘** — для тех кто хочет тишину: только сухие «Решено / Не сошлось»
 - **Chill 😎** — мягкие тёплые toast-реакции, lo-fi-style звуки
-- **Chaos 🔥** — мемные фразы КРУПНО посреди экрана + тряска + цветные вспышки +
-  синтезированные звуки (sad trombone, airhorn, vine boom, record scratch, fanfare, riser)
+- **Chaos 🔥** — мемные фразы КРУПНО посреди экрана + тряска + цветные вспышки
+  + синтезированные звуки (sad trombone, airhorn, vine boom, record scratch,
+  fanfare, riser)
 - Все звуковые эффекты **синтезированы через Web Audio** — ноль файлов, ноль копирайта
-- Мем-картинки автоматически рандомизируются (поддержка вариантов `event_2.jpg`, `event_3.jpg`...)
+- Мем-картинки автоматически рандомизируются (поддержка вариантов `event_2.jpg`, ...)
 - Per-mood фоновая музыка через `public/music/{focus,chill,chaos}.mp3` (опционально)
 - Настройки persist в localStorage
 
 ### 💎 Pro / Stripe
 - Код Stripe Checkout + webhook готов
-- **На бете: `FREE_PRO_FOR_EVERYONE=True`** — все пользователи Pro бесплатно, чтобы жюри могло потестить все фичи без оплаты
+- **На бете: `FREE_PRO_FOR_EVERYONE=True`** — все пользователи Pro бесплатно,
+  чтобы жюри могло потестить все фичи без оплаты
 
 ---
 
@@ -96,8 +99,8 @@
 | Auth | JWT (simplejwt) + Google OAuth (`google-auth`) |
 | Payments | Stripe Checkout (готов, отключён на бете) |
 | Sounds | **Web Audio API** — синтез без аудио-файлов |
-| Database | PostgreSQL (prod) / SQLite (dev) |
-| Deploy | Render (backend + Postgres) + Vercel (frontend) |
+| Database | PostgreSQL (Neon в проде, SQLite в dev) |
+| Deploy | Render (backend) + Vercel (frontend) + Neon (Postgres) |
 
 ---
 
@@ -118,40 +121,26 @@ python -m venv .venv
 .venv/Scripts/python.exe manage.py generate_daily --days 7
 .venv/Scripts/python.exe manage.py runserver        # http://localhost:8000
 
-# 3. Frontend (в другом терминале)
+# 3. Frontend (другой терминал)
 cd frontend
 npm install
 npm run dev                                          # http://localhost:3000
 ```
 
-Полный runbook: **`docs/operations_runbook.md`**.
+В dev Nuxt автоматически проксирует `/api/*` → `http://localhost:8000` —
+никакого CORS, всё работает из коробки.
 
 ---
 
-## Деплой
+## Деплой (как живая версия)
 
-`docs/deploy_guide.md` — пошагово, ~45 минут от пуша до live URL.
-
-`render.yaml` — Render Blueprint (backend + Postgres). `frontend/vercel.json` — Vercel.
-
----
-
-## Архитектура и документация
-
-Этот репозиторий построен для совместной работы Claude Code и Codex с
-полноценной системой передачи контекста между сессиями:
-
-| Файл | Назначение |
-|------|------------|
-| `CLAUDE.md` | Правила, конвенции, команды — AI-инструменты читают **первым** |
-| `docs/product_spec.md` | Полное описание продукта (single source of truth) |
-| `docs/codex_handoff.md` | Лог передачи между сессиями (Claude ⇄ Codex) |
-| `docs/next_steps.md` | Приоритетный план что осталось |
-| `docs/operations_runbook.md` | Команды запуска / деплоя |
-| `docs/deploy_guide.md` | Пошаговый деплой на Render + Vercel |
-| `docs/mood_mode_spec.md` | Концепция MoodMode |
-| `docs/memes_tz.md` | ТЗ на мем-картинки |
-| `frontend/readme.md` | Фронт-специфика, авто-импорт имён компонентов |
+- **Frontend:** Vercel, root directory `frontend`, переменная
+  `NUXT_PUBLIC_API_URL` указывает на backend
+- **Backend:** Render (Docker), `render.yaml` уже готов как Blueprint.
+  Миграции + сидинг achievements / daily challenges запускаются в
+  `backend/entrypoint.sh` при старте контейнера
+- **Postgres:** Neon (free, serverless, scale-to-zero) — `DATABASE_URL`
+  передаётся в Render как secret
 
 ---
 

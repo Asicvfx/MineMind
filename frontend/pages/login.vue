@@ -30,7 +30,9 @@
           </button>
         </form>
 
-        <div class="space-y-3">
+        <!-- Google block only renders when GOOGLE_CLIENT_ID is configured; otherwise
+             we'd show a stray "or" divider above nothing. -->
+        <div v-if="hasGoogle" class="space-y-3">
           <div class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
             <div class="h-px flex-1 bg-border"></div>
             <span>или</span>
@@ -56,6 +58,8 @@ useHead({ title: 'Войти · MineMind' })
 
 const auth = useAuthStore()
 const router = useRouter()
+const runtime = useRuntimeConfig()
+const hasGoogle = computed(() => !!runtime.public.googleClientId)
 
 const email = ref('')
 const password = ref('')

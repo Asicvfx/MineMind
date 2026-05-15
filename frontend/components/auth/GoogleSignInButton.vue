@@ -1,22 +1,19 @@
 <template>
-  <div class="space-y-3">
-    <button
-      v-if="!clientId"
-      class="w-full rounded-2xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning"
-      type="button"
-      disabled
-    >
-      Google Sign-In появится после настройки GOOGLE_CLIENT_ID
-    </button>
-
+  <!--
+    When GOOGLE_CLIENT_ID isn't configured we render nothing at all so the
+    login/register page stays clean — the email form is the canonical path.
+    The "or" divider on the parent page sits next to this component, so we
+    also collapse the wrapper via v-if (not v-show) to hide it from layout.
+  -->
+  <div v-if="clientId" class="space-y-3">
     <div
-      v-else-if="renderError"
+      v-if="renderError"
       class="w-full rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
     >
       {{ renderError }}
     </div>
 
-    <div v-show="clientId && !renderError" ref="buttonRoot" class="min-h-[44px] flex justify-center"></div>
+    <div v-show="!renderError" ref="buttonRoot" class="min-h-[44px] flex justify-center"></div>
   </div>
 </template>
 
