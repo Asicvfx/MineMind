@@ -1,3 +1,14 @@
+# Render Blueprint — deploys the Django backend + Postgres.
+# Frontend deploys separately on Vercel (see frontend/vercel.json + DEPLOY.md).
+#
+# How to use:
+#  1. Push this repo to GitHub.
+#  2. https://dashboard.render.com → New → Blueprint → pick this repo.
+#  3. Set the secret env vars below (marked sync:false) in the dashboard:
+#       OPENAI_API_KEY, CORS_ALLOWED_ORIGINS, FRONTEND_URL,
+#       GOOGLE_OAUTH_CLIENT_ID (if Google Sign-In is used).
+#  4. Apply. The preDeployCommand runs migrations + seeds.
+
 services:
   - type: web
     name: minemind-backend
@@ -15,52 +26,36 @@ services:
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        value: "*"
+        value: ".onrender.com"
       - key: DATABASE_URL
         fromDatabase:
           name: minemind-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: minemind-redis
-          property: connectionString
-      - key: CORS_ALLOWED_ORIGINS
-        sync: false
+      - key: FREE_PRO_FOR_EVERYONE
+        value: "True"
       - key: OPENAI_API_KEY
         sync: false
       - key: OPENAI_MODEL
         value: gpt-4o-mini
+      - key: OPENAI_MODEL_PRO
+        value: gpt-4o
+      # Frontend domain — set this to your Vercel URL once it exists.
+      # e.g. "https://minemind.vercel.app,https://minemind-<hash>.vercel.app"
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      # Google Sign-In (optional — leave blank to disable that button).
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+      # Stripe (optional during beta — FREE_PRO_FOR_EVERYONE=True makes
+      # everyone Pro without payment).
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_PRO_PRICE_ID
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
-      - key: STRIPE_SUCCESS_URL
-        sync: false
-      - key: STRIPE_CANCEL_URL
-        sync: false
-      - key: FRONTEND_URL
-        sync: false
-
-  - type: web
-    name: minemind-frontend
-    runtime: node
-    rootDir: frontend
-    plan: free
-    buildCommand: npm install && npm run build
-    startCommand: node .output/server/index.mjs
-    envVars:
-      - key: NUXT_PUBLIC_API_URL
-        sync: false
-      - key: NUXT_PUBLIC_STRIPE_PUBLIC_KEY
-        sync: false
-
-  - type: redis
-    name: minemind-redis
-    plan: free
-    ipAllowList: []
 
 databases:
   - name: minemind-db
