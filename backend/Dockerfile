@@ -16,8 +16,11 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
+# Normalize CRLF if the script was committed from Windows + make it executable.
+RUN sed -i 's/\r$//' entrypoint.sh && chmod +x entrypoint.sh
+
 RUN python manage.py collectstatic --noinput || true
 
 EXPOSE 8000
 
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+CMD ["./entrypoint.sh"]

@@ -16,10 +16,8 @@ services:
     rootDir: backend
     plan: free
     healthCheckPath: /api/health/
-    preDeployCommand: |
-      python manage.py migrate --noinput
-      python manage.py seed_achievements
-      python manage.py generate_daily --days 7
+    # Migrations + seeds run inside backend/entrypoint.sh on container start
+    # (preDeployCommand isn't available on Render's free tier).
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
