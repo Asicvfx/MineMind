@@ -1,13 +1,19 @@
-# Render Blueprint — deploys the Django backend + Postgres.
-# Frontend deploys separately on Vercel (see frontend/vercel.json + DEPLOY.md).
+# Render Blueprint — deploys the Django backend only.
+# Database is external (Neon.tech free Postgres) because Render's free tier
+# allows only one free database per account.
+# Frontend deploys separately on Vercel (see frontend/vercel.json + docs/deploy_guide.md).
 #
 # How to use:
-#  1. Push this repo to GitHub.
-#  2. https://dashboard.render.com → New → Blueprint → pick this repo.
-#  3. Set the secret env vars below (marked sync:false) in the dashboard:
-#       OPENAI_API_KEY, CORS_ALLOWED_ORIGINS, FRONTEND_URL,
-#       GOOGLE_OAUTH_CLIENT_ID (if Google Sign-In is used).
-#  4. Apply. The preDeployCommand runs migrations + seeds.
+#  1. Create a free Postgres on https://neon.tech → copy the connection string.
+#  2. Push this repo to GitHub.
+#  3. https://dashboard.render.com → New → Blueprint → pick this repo.
+#  4. Set the secret env vars below (marked sync:false) in the dashboard:
+#       DATABASE_URL                — Neon connection string (postgres://…)
+#       OPENAI_API_KEY              — sk-proj-…
+#       CORS_ALLOWED_ORIGINS        — fill after Vercel deploy
+#       FRONTEND_URL                — fill after Vercel deploy
+#       GOOGLE_OAUTH_CLIENT_ID      — optional
+#  5. Apply. backend/entrypoint.sh runs migrations + seeds before gunicorn.
 
 services:
   - type: web
@@ -16,8 +22,6 @@ services:
     rootDir: backend
     plan: free
     healthCheckPath: /api/health/
-    # Migrations + seeds run inside backend/entrypoint.sh on container start
-    # (preDeployCommand isn't available on Render's free tier).
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
@@ -25,10 +29,9 @@ services:
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
         value: ".onrender.com"
+      # External Neon Postgres — paste the connection string in the Render dashboard.
       - key: DATABASE_URL
-        fromDatabase:
-          name: minemind-db
-          property: connectionString
+        sync: false
       - key: FREE_PRO_FOR_EVERYONE
         value: "True"
       - key: OPENAI_API_KEY
@@ -37,8 +40,7 @@ services:
         value: gpt-4o-mini
       - key: OPENAI_MODEL_PRO
         value: gpt-4o
-      # Frontend domain — set this to your Vercel URL once it exists.
-      # e.g. "https://minemind.vercel.app,https://minemind-<hash>.vercel.app"
+      # Frontend domain — set after Vercel deploy.
       - key: CORS_ALLOWED_ORIGINS
         sync: false
       - key: FRONTEND_URL
@@ -47,16 +49,10 @@ services:
       - key: GOOGLE_OAUTH_CLIENT_ID
         sync: false
       # Stripe (optional during beta — FREE_PRO_FOR_EVERYONE=True makes
-      # everyone Pro without payment).
+      # everyone Pro without Stripe).
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_PRO_PRICE_ID
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
-
-databases:
-  - name: minemind-db
-    plan: free
-    databaseName: minemind
-    user: minemind
